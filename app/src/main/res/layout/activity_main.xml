@@ -93,6 +93,60 @@
             android:onClick="makeGuess"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/row3LinearLayout">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="New Button"
+            android:id="@+id/button5"
+            android:layout_weight="1"
+            android:lines="2"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:onClick="makeGuess"/>
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="New Button"
+            android:id="@+id/button6"
+            android:layout_weight="1"
+            android:lines="2"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:onClick="makeGuess"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/row4LinearLayout">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="New Button"
+            android:id="@+id/button7"
+            android:layout_weight="1"
+            android:lines="2"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:onClick="makeGuess"/>
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="New Button"
+            android:id="@+id/button8"
+            android:layout_weight="1"
+            android:lines="2"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:onClick="makeGuess"/>
+    </LinearLayout>
+
 
     <TextView
         android:layout_width="wrap_content"
