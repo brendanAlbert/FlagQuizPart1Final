@@ -28,6 +28,76 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * MainActivity is the main Controller for version 2 of our Flag Quiz app.
+ *
+ * There are constants to represent:
+ *  - the number of flags to guess in one play-through of the game
+ *  - the identifying keys for the two ListPreferences in preferences.xml
+ *
+ * There are arrays of:
+ *  - Buttons, this is initialized to 8.
+ *  - LinearLayouts, this is initialized to 4, but these will change according to user preference.
+ *
+ *  There are lists of Countries to represent:
+ *  - All 230-odd countries from the JSON file
+ *  - The 10 countries being used in the user's instance of the game.
+ *  - The filtered list of countries depending on the chosen region.
+ *
+ *  There are member variables to represent:
+ *     - the correct Country
+ *     - total number of guesses
+ *     - number of correct guesses
+ *     - a random number generator
+ *     - a handler for delaying being each flag when a correct flag is guessed
+ *     - how many buttons, or how many flag names the user wishes to display each round, 2,4,6,8
+ *     - which region the user wants to study, i.e. Europe or Africa
+ *
+ *   There are Views :
+ *      - TextViews for the current question number and whether a guess was right/wrong
+ *      - ImageView to display the flag
+ *
+ *   The methods of this class include:
+ *      - onCreate, this sets the content view, registers the SharedPreferencesChangeListener
+ *              which listens for when the user updates the settings.  This method also loads the
+ *              countries from the JSON file, initializes the country lists, the random number
+ *              generator and the handler.  All the View widgets are wired up and text set,
+ *              Buttons and LinearLayouts are connected.  The selection from the settings menu
+ *              is captured and the number of buttons and regions are updated via their respective
+ *              method calls.  Finally the quiz is reset.
+ *
+ *      - resetQuiz, resets guess variables, clears the country list from a previous game,
+ *              then a while loop is used to add countries to the newly cleared list. Once
+ *              ten unique entries from the correct region(s) are added to the list,
+ *              the game is started by calling loadNextFlag.
+ *
+ *      - loadNextFlag, removes a country from the list of 10 countries, the answer text view
+ *              is set to a blank string.  The current question out of 10 is displayed.
+ *              The AssetManager is used in conjunction with a try/catch to load the next flag
+ *              as a Drawable which will be set to the ImageView. A do while loop is used to
+ *              shuffle the names and orders of the Country names to be used on the Buttons
+ *              for guessing. A for loop is used to enable the buttons visibility and set
+ *              their text.  Finally, one of the buttons is selected at random and the name
+ *              of the correct country is set.
+ *
+ *      - makeGuess(View v), takes a View parameter, this represents the button the user tapped on.
+ *              The View is downcast to a Button.  The text of the chosen button is retrieved
+ *              as well as the text of the correct answer.  The total guesses is incremented.
+ *              If the guess is correct, the correct guesses is incremented and the name of the flag
+ *              is display in green text.  All the buttons are disabled.  If this is correct guess
+ *              10 out of 10, we use an AlertDialog builder to display the user's score.
+ *              Using the AlertDialog builder, a PositiveButton is set which enables the user
+ *              to retry the quiz.  If there are still more flags left to guess, then loadNextFlag
+ *              is called after a 2 second delay by the handler.  If the user makes an incorrect
+ *              guess, then the name of the incorrect guess is display in red text and that
+ *              country's button is disabled.
+ *
+ *      - onCreateOptionsMenu, is used to inflate the settings menu.
+ *
+ *      - onOptionsItemSelected, when the User taps on the settings wheel icon,
+ *              this method creates an Intent to take the user from MainActivity
+ *              to SettingsActivity.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -56,6 +126,16 @@ public class MainActivity extends AppCompatActivity {
     private static final String CHOICES = "pref_numberOfChoices";
     private static final String REGIONS = "pref_regions";
 
+    /**
+     * - onCreate, this sets the content view, registers the SharedPreferencesChangeListener
+     *              which listens for when the user updates the settings.  This method also loads the
+     *              countries from the JSON file, initializes the country lists, the random number
+     *              generator and the handler.  All the View widgets are wired up and text set,
+     *              Buttons and LinearLayouts are connected.  The selection from the settings menu
+     *              is captured and the number of buttons and regions are updated via their respective
+     *              method calls.  Finally the quiz is reset.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,6 +188,12 @@ public class MainActivity extends AppCompatActivity {
         resetQuiz();
     }
 
+    /**
+     * - resetQuiz, resets guess variables, clears the country list from a previous game,
+     *              then a while loop is used to add countries to the newly cleared list. Once
+     *              ten unique entries from the correct region(s) are added to the list,
+     *              the game is started by calling loadNextFlag.
+     */
     // set up and start the next quiz
     public void resetQuiz() {
 
@@ -148,8 +234,8 @@ public class MainActivity extends AppCompatActivity {
         // Use AssetManager to load next image from assets folder
         AssetManager am = getAssets();
 
-        // TODO: Get an InputStream to the asset representing the next flag
-        // TODO: and try to use the InputStream
+        // COMPLETED: Get an InputStream to the asset representing the next flag
+        // COMPLETED: and try to use the InputStream
         try {
             InputStream stream =
                     am.open(mCorrectCountry.getFileName());
@@ -162,24 +248,39 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, "Error loading " + mCorrectCountry.getFileName(), exception);
         }
 
-        // TODO: Shuffle the order of all the countries (use Collections.shuffle)
+        // COMPLETED: Shuffle the order of all the countries (use Collections.shuffle)
         do {
             Collections.shuffle(mFilteredCountriesList);
         } while (mFilteredCountriesList.subList(0, mChoices).contains(mCorrectCountry));
 
-        // TODO: Loop through all 4 buttons, enable them all and set them to the first 4 countries
-        // TODO: in the all countries list
+        // COMPLETED: Loop through all 4 buttons, enable them all and set them to the first 4 countries
+        // COMPLETED: in the all countries list
         for (int i = 0; i < mChoices; i++)
         {
             mButtons[i].setEnabled(true);
             mButtons[i].setText(mFilteredCountriesList.get(i).getName());
         }
-        // TODO: After the loop, randomly replace one of the 4 buttons with the name of the correct country
+        // COMPLETED: After the loop, randomly replace one of the 4 buttons with the name of the correct country
         mButtons[rng.nextInt(mChoices)].setText(mCorrectCountry.getName());
 
 
     }
 
+    /**
+     * - makeGuess(View v), takes a View parameter, this represents the button the user tapped on.
+     *              The View is downcast to a Button.  The text of the chosen button is retrieved
+     *              as well as the text of the correct answer.  The total guesses is incremented.
+     *              If the guess is correct, the correct guesses is incremented and the name of the flag
+     *              is display in green text.  All the buttons are disabled.  If this is correct guess
+     *              10 out of 10, we use an AlertDialog builder to display the user's score.
+     *              Using the AlertDialog builder, a PositiveButton is set which enables the user
+     *              to retry the quiz.  If there are still more flags left to guess, then loadNextFlag
+     *              is called after a 2 second delay by the handler.  If the user makes an incorrect
+     *              guess, then the name of the incorrect guess is display in red text and that
+     *              country's button is disabled.
+     *
+     * @param v is a View object, the Button that the user tapped on.
+     */
     public void makeGuess(View v) {
 
         Button guessButton = (Button) v;
@@ -248,6 +349,11 @@ public class MainActivity extends AppCompatActivity {
             b.setEnabled(false);
     }
 
+    /**
+     * - onCreateOptionsMenu, is used to inflate the settings menu.
+     * @param menu the menu to inflate.
+     * @return
+     */
     // Override onCreateOptionsMenu to inflate the settings menu within MainActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -255,6 +361,13 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * - onOptionsItemSelected, when the User taps on the settings wheel icon,
+     *              this method creates an Intent to take the user from MainActivity
+     *              to SettingsActivity.
+     * @param item
+     * @return
+     */
     // Responds to the user clicking the Settings menu icon
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
